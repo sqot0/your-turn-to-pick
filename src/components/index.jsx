@@ -1,4 +1,5 @@
 import { useState } from "react";
+import ConfettiExplosion from 'react-confetti-explosion';
 
 const YourTurnToPick = ({ randomMatch }) => {
     const [match, setMatch] = useState(randomMatch);
@@ -40,6 +41,15 @@ const YourTurnToPick = ({ randomMatch }) => {
   
     return (
       <>
+        {showHiddenInfo && (
+            <ConfettiExplosion
+              force={0.5}
+              duration={2000}
+              particleCount={130}
+              width={2000}
+              style={{ position: "absolute", left: "50%", transform: "translate(-50%,-50%)" }}
+            />
+        )}
         <header>
           <div className="inputContainer">
             <div className="autocomplete-container">
