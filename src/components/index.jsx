@@ -7,6 +7,12 @@ const YourTurnToPick = ({ randomMatch }) => {
     const [showHiddenInfo, setShowHiddenInfo] = useState(false);
     const [userInput, setUserInput] = useState("");
 
+    const [attempts, setAttempts] = useState(0);
+
+    const [videoHide, setVideoHide] = useState(true);
+
+    const [colorEffect, setColorEffect] = useState("");
+
     const [suggestions, setSuggestions] = useState([]);
 
     const handleChange = (e) => {
@@ -29,15 +35,26 @@ const YourTurnToPick = ({ randomMatch }) => {
     };
   
     const handleGuess = () => {
+      if (showHiddenInfo || userInput.trim().length === 0) return
       if (userInput.trim().toLowerCase() === hiddenHero.localized_name.toLowerCase()) {
+        setAttempts(0);
         setShowHiddenInfo(true);
+        setColorEffect("var(--green)");
+        setTimeout(() => {
+          setColorEffect("");
+        }, 300);
       } else {
-        alert("Incorrect guess! Try again.");
+        setAttempts(attempts + 1);
+        if (attempts > 5) {
+          setShowHiddenInfo(true);
+        }
         setUserInput("");
+        setColorEffect("var(--red)");
+        setTimeout(() => {
+          setColorEffect("");
+        }, 300);
       }
     };
-  
-    if (!match || !hiddenHero) return <p>Loading...</p>;
   
     return (
       <>
@@ -46,15 +63,22 @@ const YourTurnToPick = ({ randomMatch }) => {
             <ConfettiExplosion
               force={0.5}
               duration={2000}
-              particleCount={130}
+              particleCount={attempts === 0 ? 130 : 0}  
               width={2000}
               style={{ position: "absolute", left: "50%", transform: "translate(-50%,-50%)" }}
             />
 
             <button className="nextButton" onClick={() => window.location.reload()}>Next</button>
-
           </>
         )}
+
+        { !showHiddenInfo &&
+          <p className="attempts">Round remaining: <span>{7-attempts}</span></p>
+        } 
+        
+        <button className="videoAsideButton" onClick={() => setVideoHide(!videoHide)}>{videoHide ? "Watch video" : "Close video"}</button>
+        <iframe style={{ display: videoHide ? "none" : "block" }} className="videoAside" width="200" height="500" src="https://www.youtube.com/embed/rMgp-RveGpg" title="Евгений Вольнов - Пранки,Хачи,Коллекторы" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+        <div style = {{ boxShadow: colorEffect !== "" && `inset 0 0 20px 20px ${colorEffect}`, zIndex: colorEffect ? "1000" : "-5" }} className="colorEffect"></div>
 
         <header>
           <div className="inputContainer">
@@ -65,6 +89,7 @@ const YourTurnToPick = ({ randomMatch }) => {
                 value={userInput}
                 placeholder="Write a name of lastpick hero"
                 onChange={handleChange}
+                disabled={showHiddenInfo}
                 style={{ borderRadius: suggestions.length > 0 ? "28px 28px 0 0" : "28px" }}
               />
               {suggestions.length > 0 && (
