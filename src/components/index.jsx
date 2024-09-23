@@ -42,6 +42,7 @@ const YourTurnToPick = ({ randomMatch }) => {
     return (
       <>
         {showHiddenInfo && (
+          <>
             <ConfettiExplosion
               force={0.5}
               duration={2000}
@@ -49,7 +50,12 @@ const YourTurnToPick = ({ randomMatch }) => {
               width={2000}
               style={{ position: "absolute", left: "50%", transform: "translate(-50%,-50%)" }}
             />
+
+            <button className="nextButton" onClick={() => window.location.reload()}>Next</button>
+
+          </>
         )}
+
         <header>
           <div className="inputContainer">
             <div className="autocomplete-container">
