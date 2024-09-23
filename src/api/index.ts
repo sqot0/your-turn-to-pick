@@ -37,6 +37,7 @@ export const getRandomMatch = async (): Promise<{
     matchId: number;
     duration: number;
     bannedHeroes: HeroData[];
+    allHeroesNames: string[]
 }> => {
     const publicMatches: MatchData[] = await (await fetch(`https://api.opendota.com/api/publicMatches?min_rank=20`)).json();
 
@@ -79,6 +80,11 @@ export const getRandomMatch = async (): Promise<{
 
     const heroesData: HeroData[] = await (await fetch("https://raw.githubusercontent.com/odota/dotaconstants/refs/heads/master/build/heroes.json")).json();
 
+    const allHeroesNames: string[] = [];
+    Object.values(heroesData).forEach((hero: HeroData) => { 
+        allHeroesNames.push(hero.localized_name) 
+    });
+
     const radiantHeroes: HeroData[] = [];
     const direHeroes: HeroData[] = [];
     const bannedHeroes: HeroData[] = [];
@@ -114,5 +120,6 @@ export const getRandomMatch = async (): Promise<{
         matchId: randomMatchId,
         duration: duration,
         bannedHeroes: bannedHeroes,
+        allHeroesNames: allHeroesNames,
     } as const;
 };
