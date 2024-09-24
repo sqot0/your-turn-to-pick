@@ -2,6 +2,7 @@ type HeroData = {
     id: number;
     localized_name: string;
     img: string;
+    roles: string[];
 };
 
 type Pick_Bans = {

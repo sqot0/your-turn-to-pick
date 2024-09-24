@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ConfettiExplosion from 'react-confetti-explosion';
 
 const YourTurnToPick = ({ randomMatch }) => {
@@ -13,14 +13,30 @@ const YourTurnToPick = ({ randomMatch }) => {
 
     const [colorEffect, setColorEffect] = useState("");
 
+    const [allHeroesNames, setAllHeroesNames] = useState(randomMatch.allHeroesNames);
+
     const [suggestions, setSuggestions] = useState([]);
+
+    useEffect(() => {
+      const heroesToExclude = [
+        ...match.direHeroes,
+        ...match.radiantHeroes,
+        ...match.bannedHeroes
+      ].map(hero => hero.localized_name);
+    
+      const updatedHeroesNames = allHeroesNames.filter(heroName => {
+        return heroName === hiddenHero.localized_name || !heroesToExclude.includes(heroName);
+      });
+    
+      setAllHeroesNames(updatedHeroesNames);
+    }, []);
 
     const handleChange = (e) => {
       const input = e.target.value;
       setUserInput(input);
 
       if (input.length > 0) {
-        const filteredSuggestions = randomMatch.allHeroesNames.filter((hero) =>
+        const filteredSuggestions = allHeroesNames.filter((hero) =>
           hero.toLowerCase().startsWith(input.toLowerCase())
         );
         setSuggestions(filteredSuggestions);
@@ -45,6 +61,7 @@ const YourTurnToPick = ({ randomMatch }) => {
         }, 300);
       } else {
         setAttempts(attempts + 1);
+        setAllHeroesNames(allHeroesNames.filter((hero) => hero !== userInput));
         if (attempts > 5) {
           setShowHiddenInfo(true);
         }
@@ -127,7 +144,7 @@ const YourTurnToPick = ({ randomMatch }) => {
   
           <div className="mainContainer">
             <p id="matchDuration" className="duration hidden">
-              {showHiddenInfo
+              {showHiddenInfo || attempts > 2
                 ? `${Math.floor(match.duration / 60)}:${String(match.duration % 60).padStart(2, "0")}`
                 : "??:??"}
             </p>
@@ -169,7 +186,7 @@ const YourTurnToPick = ({ randomMatch }) => {
                           alt={isHiddenHero && !showHiddenInfo ? "???" : hero.localized_name}
                         />
                         <p className="heroName">
-                          {isHiddenHero && !showHiddenInfo ? "???" : hero.localized_name}
+                          {attempts > 2 && isHiddenHero && !showHiddenInfo ? hero.roles[0] :isHiddenHero && !showHiddenInfo ? "???" : hero.localized_name}
                         </p>
                       </div>
                     );
@@ -198,7 +215,7 @@ const YourTurnToPick = ({ randomMatch }) => {
                           alt={isHiddenHero && !showHiddenInfo ? "???" : hero.localized_name}
                         />
                         <p className="heroName">
-                          {isHiddenHero && !showHiddenInfo ? "???" : hero.localized_name}
+                          {attempts > 2 && isHiddenHero && !showHiddenInfo ? hero.roles[0] :isHiddenHero && !showHiddenInfo ? "???" : hero.localized_name}
                         </p>
                       </div>
                     );
