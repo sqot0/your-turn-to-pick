@@ -90,7 +90,7 @@ const YourTurnToPick = ({ randomMatch }) => {
         )}
 
         { !showHiddenInfo &&
-          <p className="attempts">Round remaining: <span>{7-attempts}</span></p>
+          <p className="attempts">Tries remaining: <span>{7-attempts}</span></p>
         } 
         
         <button className="videoAsideButton" onClick={() => setVideoHide(!videoHide)}>{videoHide ? "Watch video" : "Close video"}</button>
