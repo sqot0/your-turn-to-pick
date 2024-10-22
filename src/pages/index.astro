@@ -1,16 +1,40 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import { getRandomMatch } from '@api/index';
+import Layout from '@layouts/Layout.astro';
+import { getFiles } from '@actions/index';
 
-let match = await getRandomMatch();
-
-while (match.direHeroes.length !== 5 || match.radiantHeroes.length !== 5) {
-  match = await getRandomMatch();
-}
-
-import YourTurnToPick from '@components/index';
+const files = await getFiles();
 ---
 
 <Layout title="Your Turn To Pick">
-  <YourTurnToPick randomMatch={match} client:load />
+  <form>
+    <input type="file" name="file" id="file" required />
+    <button type="submit">Upload file</button>
+  </form>
+
+  <main>
+    <h1>Files</h1>
+
+    <div class="file-list">
+      {files.map((file: { url: string; name: string; }) => <a class="file" target="_blank" href={file.url}>{file.name}</a>)}
+    </div>
+  </main>
+
+  <script>
+    import { actions } from 'astro:actions';
+  
+    const form = document.getElementsByTagName('form')[0]
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault()
+
+      const formData = new FormData(form)
+
+      form.reset();
+
+      actions.uploadFile(formData)
+      setTimeout(() => {
+        window.location.reload()
+      }, 3000)
+    })
+  </script>
 </Layout>
